@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 
 app.get('/', (req, res) => {
-  res.send('¡Hola! Soy la versión 1.0 desplegada con DevOps 🚀');
+  res.send('¡Hola! Esta es la VERSIÓN 2.0 con actualización automática 🌟');
 });
 
 // Endpoint de salud para nuestros scripts de monitoreo

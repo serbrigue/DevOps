@@ -1,0 +1,46 @@
+---
+- name: Despliegue Completo DevOps
+  hosts: webservers
+  become: yes  # Ejecutar todo como root (sudo)
+
+  tasks:
+    # --- BLOQUE 1: INSTALACIÓN DE DOCKER ---
+    - name: Instalar dependencias de Docker
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip']
+
+    - name: Instalar módulo Docker para Python (necesario para Ansible)
+      pip:
+        name: docker
+
+    - name: Instalar Docker (script oficial rápido)
+      shell: curl -fsSL https://get.docker.com | sh
+      args:
+        creates: /usr/bin/docker # Si ya existe, no lo ejecuta
+
+    # --- BLOQUE 2: DESPLIEGUE DE LA APP ---
+    - name: Correr el contenedor de la App
+      docker_container:
+        name: mi-webapp
+        image: serbrigue/devops:latest  
+        state: started
+        restart_policy: always
+        ports:
+          - "80:3000" # Mapeamos puerto 80 de la VM al 3000 del contenedor
+        pull: yes # Forzar descarga de la imagen nueva
+
+    # --- BLOQUE 3: AUTOGESTIÓN Y MANTENIMIENTO ---
+    - name: Copiar script de monitoreo
+      copy:
+        src: scripts/monitor_app.sh
+        dest: /usr/local/bin/monitor_app.sh
+        mode: '0755'
+
+    - name: Programar CRON de autocuración (cada 2 minutos)
+      cron:
+        name: "Revisar salud de la App"
+        minute: "*/2"
+        job: "/usr/local/bin/monitor_app.sh"
