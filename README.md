@@ -21,12 +21,6 @@ Características principales
 Arquitectura del Pipeline
 El flujo de trabajo automatizado es:
 
-graph LR
-    A[💻 Código Local] -->|Git Push| B(☁️ GitHub Actions)
-    B -->|Test & Build| C(🐳 Docker Hub)
-    D[🔧 Ansible] -->|Despliegue IaC| E[📦 Servidor Vagrant]
-    E -->|Monitor| F(❤️ Auto-Healing)
-
 - CI: GitHub Actions prueba y construye la imagen Docker.
 - CD: Ansible aprovisiona la VM y despliega el contenedor.
 - Ops: Scripts de monitoreo (cron/bash) comprueban `/health` y reinician el servicio si es necesario.
@@ -83,10 +77,4 @@ Archivos clave
 - [scripts/monitor_app.sh](scripts/monitor_app.sh) — script de monitoreo
 - [package.json](package.json) — dependencias y scripts
 
-Contribuir
-- Crea un branch por feature, abre PR y agrega descripciones claras.
-- Mantén las instrucciones actualizadas en este README.
-
-Licencia
-Añade la licencia que prefieras (ej. MIT) en un archivo `LICENSE`
 
